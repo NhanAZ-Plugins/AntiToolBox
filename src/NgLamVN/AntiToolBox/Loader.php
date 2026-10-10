@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace NgLamVN\AntiToolBox;
 
-use NhanAZ\libBedrock\Jwt;
 use pocketmine\event\Listener;
 use pocketmine\event\server\DataPacketReceiveEvent;
+use pocketmine\network\mcpe\JwtException;
+use pocketmine\network\mcpe\JwtUtils;
 use pocketmine\network\mcpe\protocol\LoginPacket;
 use pocketmine\network\mcpe\protocol\types\DeviceOS;
 use pocketmine\plugin\PluginBase;
@@ -23,31 +24,26 @@ class Loader extends PluginBase implements Listener {
 	 * @priority NORMAL
 	 * @ignoreCancelled TRUE
 	 */
-	public function onRecieve(DataPacketReceiveEvent $event) {
-		$player = $event->getOrigin();
+	public function onReceive(DataPacketReceiveEvent $event): void {
 		$packet = $event->getPacket();
-		if ($packet instanceof LoginPacket) {
-			$jwt = Jwt::parse($packet->clientDataJwt);
-			$deviceOS = $jwt->getDeviceOS();
-			$deviceModel = $jwt->getDeviceModel();
-			if ($deviceOS !== DeviceOS::ANDROID) {
-				return;
-			}
-			/**
-			 * Something about device model check, for example:
-			 * Original client: XIAOMI Note 8 Pro
-			 * Toolbox client: Xiaomi Note 8 Pro
-			 *
-			 * Original client: SAMSUNG SM-A105F
-			 * Toolbox client: samsung SM-A105F
-			 */
-			$name = explode(" ", $deviceModel);
-			if (!isset($name[0])) {
-				return;
-			}
-			if (strtoupper($name[0]) !== $name[0]) {
-				$player->disconnect($this->getConfig()->get("kickMessage"));
-			}
+		if (!$packet instanceof LoginPacket) {
+			return;
+		}
+		try {
+			[, $claims] = JwtUtils::parse($packet->clientDataJwt);
+		} catch (JwtException) {
+			return;
+		}
+		$deviceOS = $claims['DeviceOS'] ?? null;
+		$deviceModel = $claims['DeviceModel'] ?? null;
+		if ($deviceOS !== DeviceOS::ANDROID || !is_string($deviceModel)) {
+			return;
+		}
+		$words = preg_split('/\s+/', trim($deviceModel), 2);
+		$brand = $words[0] ?? '';
+		if ($brand !== '' && strtoupper($brand) !== $brand) {
+			$message = $this->getConfig()->get('kickMessage');
+			$event->getOrigin()->disconnect(is_string($message) ? $message : 'Please use the original client to join.');
 		}
 	}
 }

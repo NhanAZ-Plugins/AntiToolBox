@@ -1,9 +1,9 @@
 ---
 name: AntiToolBox
 main: NgLamVN\AntiToolBox\Loader
-version: 0.2
+version: 0.3.0
 api: 5.0.0
-description: Somehow prevent "some" player using ToolBox client join your server.
+description: Flag Android client models with unexpected brand capitalization during login.
 author: NgLamVN
-website: github.com/NgLamVN
+website: https://github.com/NhanAZ-Plugins/AntiToolBox
 ...

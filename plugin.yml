@@ -4,6 +4,6 @@ main: NgLamVN\AntiToolBox\Loader
 version: 0.3.0
 api: 5.0.0
 description: Flag Android client models with unexpected brand capitalization during login.
-author: NgLamVN
+authors: ["NhanAZ", "NgLamVN"]
 website: https://github.com/NhanAZ-Plugins/AntiToolBox
 ...

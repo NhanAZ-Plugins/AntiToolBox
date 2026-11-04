@@ -38,3 +38,8 @@ The [build workflow](.github/workflows/build.yml) uses [DevTools](https://github
 ## Credits and license
 
 AntiToolBox was created by [Ngọc Lam](https://github.com/NgLamVN). The original warning about false positives and incomplete Toolbox detection remains relevant. This repository retains the original [MIT license](LICENSE). For current support, use [NhanAZ Discord](https://discord.gg/j2X83ujT6c).
+
+
+## Credits
+
+Authors: NhanAZ, NgLamVN.
